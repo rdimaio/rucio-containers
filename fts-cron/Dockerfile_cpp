@@ -19,6 +19,10 @@ RUN dnf update -y && \
     dnf clean all && \
     rm -rf /var/cache/dnf
 
+ENV VIRTUAL_ENV=/opt/rucio/.venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
 # Install latest kubectl
 RUN curl -o /usr/bin/kubectl -L https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 RUN chmod +x /usr/bin/kubectl
@@ -35,8 +39,6 @@ RUN yum -y install wget && \
     yum clean all && \
     rm -rf /var/cache/yum
 
-# Uninstall rpm-installed setuptools to reinstall via pip
-RUN dnf remove --assumeyes python3-setuptools
 
 RUN python3 -m pip install --no-cache-dir --upgrade pip
 RUN python3 -m pip install --no-cache-dir --upgrade setuptools
